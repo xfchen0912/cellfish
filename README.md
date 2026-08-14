@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="cellfish_icon.png" alt="cellfish" width="360">
+</p>
+
 # cellfish
 
 Personal single-cell helpers for scRNA-seq, scATAC-seq / multiome, and (later) spatial.
@@ -7,8 +11,9 @@ import cellfish as cf
 
 cf.pl.setup_style()
 cf.data.require_obs(adata, ["cell_type"])
+cf.pl.embedding(adata, basis="X_umap", color="cell_type", palette=MY_PALETTE)
+cf.pl.embedding(adata, basis="spatial", color="cell_type", palette=MY_PALETTE)
 cf.io.write_h5_safe(adata, path)
-cf.ext.drvi.plot_latent_heatmap(...)  # after migration
 ```
 
 Install (editable):
@@ -24,7 +29,7 @@ Layout and migration notes: [PLAN.md](PLAN.md).
 - Sanitize and write AnnData / MuData
 - Check `obs` / `obsm` / `var` / layers
 - Join paired modalities (RNA ↔ ATAC, later RNA ↔ spatial)
-- Publication style (fonts, PDF-safe save)
+- Publication plotting (`cf.pl.embedding`, palettes, plot1cell, proportions, …)
 - Thin wrappers around analysis tools under `ext/<tool>/`
 
 ## What it does not do
@@ -41,7 +46,7 @@ Those stay in the analysis repository.
 src/cellfish/
 ├── io/          # write hygiene
 ├── data/        # checks, markers, pairing
-├── plot/        # style, palettes, generic plots (as sch.pl)
+├── plot/        # sc_helpers-style publication plots (cf.pl)
 ├── stats/       # thin stats glue
 └── ext/         # one folder per algorithm (lazy import)
 ```

@@ -277,13 +277,15 @@ scenicplus = []        # 函数内 import
 
 本仓库 notebook 暂不改 import；可加一层薄兼容（旧 `sc_helpers` 转调新入口）。
 
-### 阶段 2 — 去重层 1 绘图
+### 阶段 2 — 去重层 1 绘图 ✅
 
-1. 合并 `_single` / `_scatterplot` 的 embedding 对外 API，统一 `basis=`
-2. 正名 `_spatial.py`（等高线 ≠ 组织图）
-3. `_palettes.py` 移出课题色板，改由本仓库传入 `palette=`
-4. 删 dask/zarr 桩和 `scanpy_helpers.py`
-5. 新图函数一律走 `require_*` + `setup_style` / `savefig`，禁止再复制 font loader
+1. 合并 `_single` / `_scatterplot` 的 embedding 对外 API，统一 `basis=`  
+   → 迁入 omicverse/sc_helpers 风格的 `_single.py` + `_scatterplot.py`（不是 `scanpy.pl` 薄封装）。`cf.pl.embedding` 指向这套实现。
+2. 正名 `_spatial.py`（等高线 ≠ 组织图）  
+   → `cellfish.plot._contour`（原 `add_contour` / `plot_scatter`）。
+3. `_palettes.py` 迁入通用色表（`sc_color`、`palette_28` 等）和 `get_palette` / `reorder_and_set_palettes`；课题色板不进包，用 `palette=` / `group_color_dict=` 传入。
+4. 层 1 其余出图一并迁入：`_dotplot` / `_grid_dotplot`（marsilea，惰性导入）、`_plot1cell` / `_plot1cell_atlas`、ridge / proportions。
+5. 删 dask/zarr 桩；`scanpy_helpers.py` 改为对 `sc_helpers` 的弃用转调。
 
 ### 阶段 3 — 按算法进 `ext/`（可分 PR，每个工具一次）
 
