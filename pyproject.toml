@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cellfish"
+version = "0.1.0"
+description = "Personal single-cell helpers for RNA, ATAC/multiome, and later spatial."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Xufeng Chen", email = "chenxufeng2022@sinh.ac.cn"},
+]
+dependencies = [
+    "anndata>=0.12.2",
+    "matplotlib",
+    "mudata",
+    "numpy",
+    "pandas",
+    "scanpy",
+    "scipy",
+    "seaborn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pre-commit",
+]
+plot = [
+    "marsilea",
+    "rich",
+    "fonttools",
+]
+drvi = []
+chrombpnet = [
+    "logomaker",
+    "h5py",
+    "pyranges",
+]
+scenicplus = []
+liana = []
+all = [
+    "cellfish[dev,plot,chrombpnet]",
+]
+
+[project.urls]
+Homepage = "https://github.com/xfchen0912/cellfish"
+Source = "https://github.com/xfchen0912/cellfish"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cellfish*"]
+
+[tool.setuptools.package-data]
+cellfish = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+
+[tool.ruff]
+src = ["src"]
+line-length = 119
+target-version = "py311"
+
+[tool.isort]
+profile = "black"
+known_first_party = "cellfish"
