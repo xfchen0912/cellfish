@@ -55,7 +55,7 @@ def get_cluster_proportions(
 def plot_cluster_proportions(
     cluster_props: pd.DataFrame,
     cluster_palette: Sequence[str] | dict[str, str] | None = None,
-    xlabel_rotation: int = 0,
+    xlabel_rotation: int = 90,
     figsize: tuple[float, float] | None = None,
     dpi: float | int | None = None,
     show: bool = True,
@@ -82,6 +82,7 @@ def plot_cluster_proportions(
     ax.legend(bbox_to_anchor=(1.01, 1), frameon=False, title="Cluster")
     sns.despine(fig, ax)
     ax.tick_params(axis="x", rotation=xlabel_rotation)
+    plt.setp(ax.get_xticklabels(), rotation=xlabel_rotation, ha="right")
     ax.set_xlabel(plot_df.index.name)
     ax.set_ylabel("Proportion")
     fig.tight_layout()

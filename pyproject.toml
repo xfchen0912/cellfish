@@ -28,6 +28,21 @@ dev = [
     "pytest",
     "pre-commit",
 ]
+doc = [
+    "docutils>=0.8,!=0.18.*,!=0.19.*",
+    "ipykernel",
+    "ipython",
+    "myst-nb>=1.1",
+    "setuptools",
+    "sphinx>=4",
+    "sphinx-autodoc-typehints",
+    "sphinx-book-theme>=1",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinxcontrib-bibtex>=1",
+    "sphinxcontrib-mermaid",
+    "sphinxext-opengraph",
+]
 plot = [
     "marsilea",
     "rich",
@@ -42,10 +57,11 @@ chrombpnet = [
 scenicplus = []
 liana = []
 all = [
-    "cellfish[dev,plot,chrombpnet]",
+    "cellfish[dev,plot,doc,chrombpnet]",
 ]
 
 [project.urls]
+Documentation = "https://cellfish.readthedocs.io/"
 Homepage = "https://github.com/xfchen0912/cellfish"
 Source = "https://github.com/xfchen0912/cellfish"
 

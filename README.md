@@ -22,7 +22,14 @@ Install (editable):
 pip install -e ".[dev]"
 ```
 
-Layout and migration notes: [PLAN.md](PLAN.md).
+Documentation (Sphinx, same layout as scMagnify):
+
+```bash
+pip install -e ".[doc,plot]"
+cd docs && make html
+```
+
+Hosted docs: [https://cellfish.readthedocs.io](https://cellfish.readthedocs.io). Layout and migration notes: [PLAN.md](PLAN.md).
 
 ## What this package does
 

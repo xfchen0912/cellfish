@@ -381,9 +381,6 @@ def plot_boxplots(  # pragma: no cover
             >>> mdata = sccoda.load(haber_cells, type="cell_level", generate_sample_level=True, cell_type_identifier="cell_label", \
                 sample_identifier="batch", covariate_obs=["condition"])
             >>> sccoda.plot_boxplots(mdata, feature_name="condition", add_dots=True)
-
-        Preview:
-            .. image:: /_static/docstring_previews/sccoda_boxplots.png
         """
     if args_boxplot is None:
         args_boxplot = {}
@@ -604,7 +601,6 @@ def violin_old(
 
 
 def violin_box(adata, keys, groupby, ax=None, figsize=(4, 4), show=True, max_strip_points=1000):
-    import colorcet
     from scipy.sparse import issparse
 
     # 获取 y 数据

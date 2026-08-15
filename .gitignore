@@ -49,6 +49,10 @@ ENV/
 # Jupyter
 .ipynb_checkpoints/
 
+# Sphinx
+docs/_build/
+docs/api/generated/
+
 # OS
 .DS_Store
 
