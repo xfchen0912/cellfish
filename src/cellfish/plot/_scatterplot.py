@@ -80,6 +80,58 @@ def _get_vector_friendly():
         except AttributeError:
             return True  # Default fallback
 
+
+AxisType = Literal["arrow", "boxed", "hidden"]
+ColorbarType = Literal["compact", "standard"]
+FrameonValue = Union[bool, Literal["small"]]
+_FRAMEON_UNSET = object()
+
+
+def _resolve_axis_colorbar_types(
+    *,
+    axis_type: Optional[AxisType] = None,
+    colorbar_type: Optional[ColorbarType] = None,
+    frameon: Any = _FRAMEON_UNSET,
+) -> Tuple[AxisType, ColorbarType]:
+    """Resolve axis and colorbar styling; ``frameon`` is deprecated."""
+    frameon_passed = frameon is not _FRAMEON_UNSET
+
+    if frameon_passed:
+        warn(
+            "The `frameon` argument is deprecated and will be removed in a future "
+            "release. Use `axis_type` and `colorbar_type` instead "
+            "(e.g. axis_type='arrow', colorbar_type='compact').",
+            DeprecationWarning,
+            stacklevel=4,
+        )
+        if axis_type is None:
+            if frameon is False or frameon == "small":
+                axis_type = "arrow"
+            else:
+                axis_type = "boxed"
+        if colorbar_type is None:
+            if frameon is False or frameon == "small":
+                colorbar_type = "compact"
+            else:
+                colorbar_type = "standard"
+
+    if axis_type is None:
+        axis_type = "arrow"
+    if colorbar_type is None:
+        colorbar_type = "compact"
+
+    valid_axis = {"arrow", "boxed", "hidden"}
+    valid_colorbar = {"compact", "standard"}
+    if axis_type not in valid_axis:
+        raise ValueError(f"axis_type must be one of {sorted(valid_axis)}, got {axis_type!r}.")
+    if colorbar_type not in valid_colorbar:
+        raise ValueError(
+            f"colorbar_type must be one of {sorted(valid_colorbar)}, got {colorbar_type!r}."
+        )
+
+    return axis_type, colorbar_type
+
+
 @_doc_params(
     adata_color_etc=doc_adata_color_etc,
     edges_arrows=doc_edges_arrows,
@@ -112,7 +164,9 @@ def embedding(
     na_color: ColorLike = "lightgray",
     na_in_legend: bool = True,
     size: Union[float, Sequence[float], None] = None,
-    frameon: Optional[bool] = None,
+    axis_type: Optional[AxisType] = None,
+    colorbar_type: Optional[ColorbarType] = None,
+    frameon: Any = _FRAMEON_UNSET,
     legend_fontsize: Union[int, float, _FontSize, None] = None,
     legend_fontweight: Union[int, _FontWeight] = 'bold',
     legend_loc: str = 'right margin',
@@ -190,7 +244,11 @@ def embedding(
         na_color: Color for missing values ('lightgray')
         na_in_legend: Include missing values in legend (True)
         size: Point size (None)
-        frameon: Draw frame around plot (None)
+        axis_type: Axis styling - ``'arrow'`` (corner arrows, default),
+            ``'boxed'`` (full spines), or ``'hidden'`` (no axes). (``'arrow'``)
+        colorbar_type: Continuous colorbar layout - ``'compact'`` (default) or
+            ``'standard'``. (``'compact'``)
+        frameon: Deprecated. Use ``axis_type`` and ``colorbar_type`` instead.
         legend_fontsize: Font size for legend (None)
         legend_fontweight: Font weight for legend ('bold')
         legend_loc: Location of legend ('right margin')
@@ -228,6 +286,12 @@ def embedding(
 
     check_projection(projection)
     sanitize_anndata(adata)
+
+    axis_type, colorbar_type = _resolve_axis_colorbar_types(
+        axis_type=axis_type,
+        colorbar_type=colorbar_type,
+        frameon=frameon,
+    )
 
     basis_values = _get_basis(adata, basis)
     dimensions = _components_to_dimensions(
@@ -417,34 +481,19 @@ def embedding(
         if grid:
             ax = pl.subplot(grid[count], **args_3d)
             axs.append(ax)
-        if frameon ==False:
-            ax.axis('off')
-            if projection != '3d':
-                from ..plot._embedding import add_arrow
-                add_arrow(ax,adata,basis,fontsize=legend_fontsize,arrow_scale=arrow_scale,arrow_width=arrow_width)
-        elif frameon == 'small':
-            ax.axis('off')
-            if projection != '3d':
-                from ..plot._embedding import add_arrow
-                add_arrow(ax,adata,basis,fontsize=legend_fontsize,arrow_scale=arrow_scale,arrow_width=arrow_width)
-            '''
-            #ax.axis('off')
-            xmin=coords[:, 0].min()
-            xmax=coords[:, 0].max()
-            ymin=coords[:, 1].min()
-            ymax=coords[:, 1].max()
+        if axis_type in {"arrow", "hidden"}:
+            ax.axis("off")
+        if axis_type == "arrow" and projection != "3d":
+            from ..plot._embedding import add_arrow
 
-            #ax.spines['left'].set_position(('outward', 10))
-            #ax.spines['bottom'].set_position(('axes', 0))
-            ax.spines['left'].set_position(('data', xmin))
-            ax.spines['bottom'].set_position(('data', ymin))
-
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            #ax.spines['bottom'].set_bounds(xmin,xmin+(xmax-xmin)/6)
-            #ax.spines['left'].set_bounds(ymin,ymin+(ymax-ymin)/6)
-            '''
-
+            add_arrow(
+                ax,
+                adata,
+                basis,
+                fontsize=legend_fontsize,
+                arrow_scale=arrow_scale,
+                arrow_width=arrow_width,
+            )
 
         
         if title is None:
@@ -648,7 +697,7 @@ def embedding(
             )
         elif colorbar_loc is not None:
 
-            if frameon=='small' or frameon==False:
+            if colorbar_type == "compact":
 
                 from matplotlib.ticker import MaxNLocator
 
@@ -2453,7 +2502,9 @@ def _embedding(
     na_color: ColorLike = "lightgray",
     na_in_legend: bool = True,
     size: Union[float, Sequence[float], None] = None,
-    frameon: Optional[bool] = None,
+    axis_type: Optional[AxisType] = None,
+    colorbar_type: Optional[ColorbarType] = None,
+    frameon: Any = _FRAMEON_UNSET,
     legend_fontsize: Union[int, float, _FontSize, None] = None,
     legend_fontweight: Union[int, _FontWeight] = 'bold',
     legend_loc: str = 'right margin',
@@ -2516,7 +2567,8 @@ def _embedding(
                      layer=layer, projection=projection, scale_factor=scale_factor,
                        color_map=color_map, cmap=cmap, palette=palette, 
                        na_color=na_color, na_in_legend=na_in_legend, 
-                       size=size, frameon=frameon, legend_fontsize=legend_fontsize, 
+                       size=size, axis_type=axis_type, colorbar_type=colorbar_type,
+                       frameon=frameon, legend_fontsize=legend_fontsize, 
                        legend_fontweight=legend_fontweight, legend_loc=legend_loc, 
                        legend_style=legend_style, legend_groupby=legend_groupby,
                        legend_group_order=legend_group_order, legend_columns=legend_columns,

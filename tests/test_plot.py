@@ -2,6 +2,8 @@ import matplotlib
 
 matplotlib.use("Agg")
 
+import warnings
+
 import numpy as np
 from anndata import AnnData
 
@@ -39,6 +41,29 @@ def test_embedding_basis_alias():
     from cellfish.plot._single import embedding as style_embedding
 
     assert public_embedding is style_embedding
+
+
+def test_embedding_axis_and_colorbar_types():
+    adata = _tiny()
+    ax = embedding(adata, basis="X_umap", color="cell_type", axis_type="arrow", show=False)
+    assert ax is not None
+    assert not ax.get_xaxis().get_visible()
+    ax_boxed = embedding(adata, basis="X_umap", color="cell_type", axis_type="boxed", show=False)
+    assert ax_boxed is not None
+    ax_hidden = embedding(adata, basis="X_umap", color="cell_type", axis_type="hidden", show=False)
+    assert ax_hidden is not None
+    assert not ax_hidden.get_xaxis().get_visible()
+    ax_gene = embedding(adata, basis="X_umap", color="qc", colorbar_type="standard", show=False)
+    assert ax_gene is not None
+
+
+def test_frameon_deprecated():
+    adata = _tiny()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        embedding(adata, basis="X_umap", color="cell_type", frameon=False, show=False)
+    assert any(issubclass(w.category, DeprecationWarning) for w in caught)
+    assert any("frameon" in str(w.message) for w in caught)
 
 
 def test_add_contour():

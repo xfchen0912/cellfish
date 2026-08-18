@@ -25,7 +25,9 @@ import scanpy as sc
 from scanpy.plotting._utils import ColorLike, VBound, _FontSize, _FontWeight
 
 from ._scatterplot import _embedding
+from ._scatterplot import _FRAMEON_UNSET
 from ._scatterplot import embedding_numbered as embedding_numbered
+from ._scatterplot import AxisType, ColorbarType
 
 def mde(adata: AnnData, **kwargs):
     r"""
@@ -105,7 +107,11 @@ def umap(adata: AnnData, **kwargs):
         na_color: Color to use for NaN values. ('lightgray')
         na_in_legend: Include NaN values in legend. (True)
         size: Size of the dots. (None)
-        frameon: Draw a frame around the plot. ('small')
+        axis_type: Axis styling - ``'arrow'`` (corner arrows), ``'boxed'``
+            (full spines), or ``'hidden'`` (no axes). (``'arrow'``)
+        colorbar_type: Continuous colorbar layout - ``'compact'`` or
+            ``'standard'``. (``'compact'``)
+        frameon: Deprecated. Use ``axis_type`` and ``colorbar_type`` instead.
         legend_fontsize: Font size for legend. (None)
         legend_fontweight: Font weight for legend. ('bold')
         legend_loc: Location of legend. ('right margin')
@@ -164,7 +170,9 @@ def embedding(
     na_color: ColorLike = "lightgray",
     na_in_legend: bool = True,
     size: Union[float, Sequence[float], None] = None,
-    frameon: Optional[bool] = "small",
+    axis_type: AxisType = "arrow",
+    colorbar_type: ColorbarType = "compact",
+    frameon: Union[bool, Literal["small"], None] = _FRAMEON_UNSET,
     legend_fontsize: Union[int, float, _FontSize, None] = None,
     legend_fontweight: Union[int, _FontWeight] = "bold",
     legend_loc: str = "right margin",
@@ -218,7 +226,11 @@ def embedding(
         na_color: Color to use for NaN values. ('lightgray')
         na_in_legend: Include NaN values in legend. (True)
         size: Size of the dots. (None)
-        frameon: Draw a frame around the plot. ('small')
+        axis_type: Axis styling - ``'arrow'`` (corner arrows), ``'boxed'``
+            (full spines), or ``'hidden'`` (no axes). (``'arrow'``)
+        colorbar_type: Continuous colorbar layout - ``'compact'`` or
+            ``'standard'``. (``'compact'``)
+        frameon: Deprecated. Use ``axis_type`` and ``colorbar_type`` instead.
         legend_fontsize: Font size for legend. (None)
         legend_fontweight: Font weight for legend. ('bold')
         legend_loc: Location of legend. ('right margin')
@@ -275,6 +287,8 @@ def embedding(
         na_color=na_color,
         na_in_legend=na_in_legend,
         size=size,
+        axis_type=axis_type,
+        colorbar_type=colorbar_type,
         frameon=frameon,
         legend_fontsize=legend_fontsize,
         legend_fontweight=legend_fontweight,
